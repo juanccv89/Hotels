@@ -13,6 +13,7 @@ data.forEach((hotel, index) => {
         const sectionSelected = document.getElementsByClassName("HotelsContainer");
         const articleCreated = document.createElement("article");
         articleCreated.className = "HotelCard";
+        articleCreated.setAttribute("data-categoria", hotel.country);
         sectionSelected[0].appendChild(articleCreated);
 
         const articleSelected = document.getElementsByClassName("HotelCard");
@@ -86,5 +87,23 @@ data.forEach((hotel, index) => {
 });
 
 // Aplicación de filtros
+//Input Countries
 
+const filterCategory = document.getElementById("filter-countries");
+const sectionElements = document.querySelector(".HotelsContainer").querySelectorAll(".HotelCard");
 
+filterCategory.addEventListener("change", filterElement);
+
+function filterElement() {
+    const valueFilter = filterCategory.value.toLowerCase();
+
+    sectionElements.forEach((HotelCard) => {
+        const elementCategory = HotelCard.getAttribute("data-categoria").toLowerCase();
+
+        if (valueFilter === "all" || elementCategory.includes(valueFilter)) {
+            HotelCard.style.display = "block";
+        } else {
+            HotelCard.style.display = "none";
+        }
+    });
+}
