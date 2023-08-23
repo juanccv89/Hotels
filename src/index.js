@@ -14,7 +14,10 @@ data.forEach((hotel, index) => {
         const articleCreated = document.createElement("article");
         articleCreated.className = "HotelCard";
         articleCreated.setAttribute("data-categoria", hotel.country);
+        articleCreated.setAttribute("data-checkin", hotel.availabilityFrom);
+        articleCreated.setAttribute("data-checkout", hotel.availabilityTo);
         articleCreated.setAttribute("data-precio", hotel.price);
+
         sectionSelected[0].appendChild(articleCreated);
 
         const articleSelected = document.getElementsByClassName("HotelCard");
@@ -88,27 +91,35 @@ data.forEach((hotel, index) => {
 });
 
 // Aplicación de filtros
-//Input Countries
 
 const filterCategory = document.getElementById("filter-countries");
+const filterCheckIn = document.getElementById("checkIn");
+const filterCheckOut = document.getElementById("checkOut");
 const filterPrices = document.getElementById("filter-prices");
 const sectionElements = document.querySelector(".HotelsContainer").querySelectorAll(".HotelCard");
 
 filterCategory.addEventListener("change", filterElements);
+filterCheckIn.addEventListener("change", filterElements);
+filterCheckOut.addEventListener("change", filterElements);
 filterPrices.addEventListener("change", filterElements);
 
 function filterElements() {
     const categoryValue = filterCategory.value.toLowerCase();
+    const checkInValue = new Date(filterCheckIn.value).getTime();
+    const checkOutValue = new Date(filterCheckOut.value).getTime();
     const priceValue = filterPrices.value.toLowerCase();
 
     sectionElements.forEach((HotelCard) => {
         const elementCategory = HotelCard.getAttribute("data-categoria").toLowerCase();
+        const elementCheckIn = parseInt(HotelCard.getAttribute("data-checkin"));
+        const elementCheckOut = parseInt(HotelCard.getAttribute("data-checkout"));
         const elementPrice = HotelCard.getAttribute("data-precio").toLowerCase();
 
         const categoryMatch = categoryValue === "all" || elementCategory.includes(categoryValue);
+        const availabilityMatch = checkInValue <= elementCheckIn && checkOutValue >= elementCheckOut;
         const priceMatch = priceValue === "all" || elementPrice === priceValue;
 
-        if (categoryMatch && priceMatch) {
+        if (categoryMatch && availabilityMatch && priceMatch) {
             HotelCard.style.display = "block";
         } else {
             HotelCard.style.display = "none";
