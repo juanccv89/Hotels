@@ -9,6 +9,27 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Pacifico&family=Roboto&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const clearButton = document.querySelector('.Filter__Clear');
+
+            clearButton.addEventListener('click', function () {
+                const countriesSelect = document.getElementById('filter-countries');
+                const dateFromInput = document.getElementById('checkIn');
+                const dateToInput = document.getElementById('checkOut');
+                const pricesSelect = document.getElementById('filter-prices');
+                const sizesSelect = document.getElementById('filter-sizes');
+
+                countriesSelect.value = 'all';
+                dateFromInput.value = '';
+                dateToInput.value = '';
+                pricesSelect.value = 'all';
+                sizesSelect.value = 'all';
+
+                window.location.reload();
+            });
+        });
+    </script>    
 </head>
 <body>
     <header>
@@ -37,7 +58,7 @@
                     <option value="size2">Medium</option>
                     <option value="size3">Large</option>
                 </select>
-                <button class="Filter__Clear">Clear</button>
+                <button type="button" class="Filter__Clear">Clear</button>
             </div>
         </div>
         <div class="FoundMessage__Container">

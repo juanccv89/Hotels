@@ -1,7 +1,11 @@
+// Importación de datos desde la API
+
 import { requestingHotels } from "./hotels.js";
 
 const respuesta = await requestingHotels();
 const data = await respuesta.json();
+
+// Creación de etiquetas en el HTML desde JS
 
 const mainSelected = document.getElementById("Main");
 const sectionCreated = document.createElement("section");
@@ -98,10 +102,49 @@ const filterCheckOut = document.getElementById("checkOut");
 const filterPrices = document.getElementById("filter-prices");
 const sectionElements = document.querySelector(".HotelsContainer").querySelectorAll(".HotelCard");
 
+const today = new Date().toISOString().split("T")[0];
+filterCheckIn.setAttribute("min", today);
+
 filterCategory.addEventListener("change", filterElements);
 filterCheckIn.addEventListener("change", filterElements);
 filterCheckOut.addEventListener("change", filterElements);
 filterPrices.addEventListener("change", filterElements);
+
+function filterByCategory(categoryValue, elements) {
+    if (categoryValue === "all") {
+    return elements;
+    }
+
+return Array.from(elements).filter((HotelCard) => {
+    const elementCategory = HotelCard.getAttribute("data-categoria").toLowerCase();
+    return elementCategory.includes(categoryValue);
+    });
+}
+
+function filterByAvailability(checkInValue, checkOutValue, elements) {
+    if (!checkInValue || !checkOutValue) {
+    return elements;
+    }
+
+return Array.from(elements).filter((HotelCard) => {
+    const elementCheckIn = parseInt(HotelCard.getAttribute("data-checkin"));
+    const elementCheckOut = parseInt(HotelCard.getAttribute("data-checkout"));
+
+    const availabilityDate = elementCheckIn === 0 ? today : new Date(today).getTime() + elementCheckIn;
+    return checkInValue <= availabilityDate && checkOutValue >= elementCheckOut;
+    });
+}
+
+function filterByPrice(priceValue, elements) {
+    if (priceValue === "all") {
+    return elements;
+    }
+
+return Array.from(elements).filter((HotelCard) => {
+    const elementPrice = HotelCard.getAttribute("data-precio").toLowerCase();
+    return elementPrice === priceValue;
+    });
+}
 
 function filterElements() {
     const categoryValue = filterCategory.value.toLowerCase();
@@ -109,20 +152,30 @@ function filterElements() {
     const checkOutValue = new Date(filterCheckOut.value).getTime();
     const priceValue = filterPrices.value.toLowerCase();
 
-    sectionElements.forEach((HotelCard) => {
-        const elementCategory = HotelCard.getAttribute("data-categoria").toLowerCase();
-        const elementCheckIn = parseInt(HotelCard.getAttribute("data-checkin"));
-        const elementCheckOut = parseInt(HotelCard.getAttribute("data-checkout"));
-        const elementPrice = HotelCard.getAttribute("data-precio").toLowerCase();
+let filteredElements = sectionElements;
 
-        const categoryMatch = categoryValue === "all" || elementCategory.includes(categoryValue);
-        const availabilityMatch = checkInValue <= elementCheckIn && checkOutValue >= elementCheckOut;
-        const priceMatch = priceValue === "all" || elementPrice === priceValue;
+    filteredElements = filterByCategory(categoryValue, filteredElements);
+    filteredElements = filterByAvailability(checkInValue, checkOutValue, filteredElements);
+    filteredElements = filterByPrice(priceValue, filteredElements);
 
-        if (categoryMatch && availabilityMatch && priceMatch) {
-            HotelCard.style.display = "block";
-        } else {
-            HotelCard.style.display = "none";
-        }
+const errorMessageElement = document.getElementById("error-message");
+
+    if (filteredElements.length === 0) {
+    errorMessageElement.textContent = "No search results found. Please refine the entered values.";
+    } else {errorMessageElement.textContent = "";
+    }
+
+sectionElements.forEach((HotelCard) => {
+    if (categoryValue === "all" || filteredElements.includes(HotelCard)) {
+        HotelCard.style.display = "block";
+    } else {
+        HotelCard.style.display = "none";
+    }
     });
+
+    if (filteredElements.length === 0) {
+        errorMessageElement.style.display = "block";
+    } else {
+        errorMessageElement.style.display = "none";
+    }
 }
