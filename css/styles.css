@@ -6,7 +6,7 @@
 header {
   display: flex;
   flex-direction: column;
-  background-color: gray;
+  /* background-color: gray; */
   background-image: url("../Rectangle.png");
   background-repeat: no-repeat;
   padding: 48px 48px 28px 48px;
